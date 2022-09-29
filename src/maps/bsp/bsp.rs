@@ -80,7 +80,7 @@ impl BspMap {
     }
 
     fn apply_room_to_map(&mut self, room : &Room) {
-        for y in room.y1 +1 ..= room.y2 {
+        for y in room.y1 + 1 ..= room.y2 {
             for x in room.x1 + 1 ..= room.x2 {
                 self.map.set_tile(x, y, TileType::Floor);
             }

@@ -124,7 +124,6 @@ impl Architect for DrunkardWalkMap {
                 }
             }
             floor_tile_count = self.map.tiles.iter().filter(|a| **a == TileType::Floor).count();
-            println!("{}/{} tiles made", floor_tile_count, desired_floor_tiles);
         }
 
         // Set the exit

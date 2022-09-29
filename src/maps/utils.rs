@@ -89,9 +89,10 @@ impl Map {
     pub fn output_map(&self, name: &str) {
         let mut map = Vec::new();
         
-        for x in 0..self.width {
+        println!("Width: {} Height: {}", self.width, self.height);
+        for y in 0..self.height {
             let mut inner = Vec::new();
-            for y in 0..self.height {
+            for x in 0..self.width {
                 let tile = self.get_tile(x, y);
                 match tile {
                     TileType::Floor => inner.push(' '),
@@ -100,14 +101,16 @@ impl Map {
                     _ => {}
                 }
             }
+
             map.push(inner);
         }
         
         let filename = format!("test_maps_output/{}", name);
         let mut output = fs::File::create(filename).unwrap();
-        for x in 0..self.width {
-            for y in 0..self.height {
-                write!(output, "{}", map[x as usize][y as usize]).unwrap()
+        
+        for inner in map.iter() {
+            for c in inner.iter() {
+                write!(output, "{}", c).unwrap();
             }
             write!(output, "\n").unwrap();
         }
@@ -119,12 +122,14 @@ impl Map {
     }
 }
 
+/// Required for bracket-lib pathfinding
 impl Algorithm2D for Map {
     fn dimensions(&self) -> Point {
         Point::new(self.width, self.height)
     }
 }
 
+/// Required for bracket-lib pathfinding
 impl BaseMap for Map {
     fn is_opaque(&self, idx: usize) -> bool {
         self.get_tile_at_idx(idx) == TileType::Wall

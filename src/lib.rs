@@ -6,9 +6,9 @@ mod tests {
 
     #[test]
     fn build_test_map() {
-        let mut m = MapSelector::basic_map(300, 300);
+        let mut m = MapSelector::basic_map(100, 100);
         m.build();
-        m.map.output_map("test_map.txt");
+        m.map.output_map("basic_map.txt");
     }
 
     #[test]
@@ -34,7 +34,7 @@ mod tests {
 
     #[test]
     fn build_drunkard_walk_map_open_area() {
-        let mut m = MapSelector::drunkard_walk_map_open_area(100, 100);
+        let mut m = MapSelector::drunkard_walk_map_open_area(80, 50);
         m.build();
         m.map.output_map("drunkard_walk_map_open_area.txt");
     }

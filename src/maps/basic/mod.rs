@@ -44,18 +44,28 @@ impl BasicMap {
             }
         }
     }
+
+    fn fill_edges(&mut self) {
+        for x in 0..self.width {
+            for y in 0..self.height {
+                if x == 0 || y == 0 || x == self.width - 1 || y == self.height - 1 {
+                    self.map.set_tile(x, y, TileType::Wall);
+                }
+            }
+        }
+    }
 }
 
 impl Architect for BasicMap {
     fn build(&mut self) {
         let mut rooms : Vec<Room> = Vec::new();
-        let max_rooms : i32 = 30;
+        let max_rooms : f32 = (self.width * self.height) as f32 * 0.01;
         let min_size : i32 = 6;
         let max_size : i32 = 10;
 
         let mut rng = RandomNumberGenerator::new();
 
-        for _ in 0..max_rooms {
+        for _ in 0..max_rooms as i32 {
             let w = rng.range(min_size, max_size);
             let h = rng.range(min_size, max_size);
             let x = rng.roll_dice(1, (self.width + 1) - w - 1) - 1;
@@ -89,5 +99,7 @@ impl Architect for BasicMap {
 
         let (exit_x, exit_y) = rooms[rooms.len() - 1].center();
         self.map.set_tile(exit_x, exit_y, TileType::Exit);
+
+        self.fill_edges();
     }
 }
