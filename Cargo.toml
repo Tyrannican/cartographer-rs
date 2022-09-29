@@ -8,3 +8,6 @@ edition = "2021"
 [dependencies]
 bracket-pathfinding = "0.8.4"
 rand = "0.8.5"
+
+[features]
+debug = []

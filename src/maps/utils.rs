@@ -1,5 +1,9 @@
 use rand::Rng;
+
+#[cfg(feature = "debug")]
 use std::fs;
+
+#[cfg(feature = "debug")]
 use std::io::prelude::*;
 
 use bracket_pathfinding::prelude::*;
@@ -150,6 +154,7 @@ impl RandomNumberGenerator {
     }
 }
 
+#[cfg(feature = "debug")]
 pub fn output_map(map: &Map, name: &str) {
     let mut outer = Vec::new();
     
@@ -168,6 +173,7 @@ pub fn output_map(map: &Map, name: &str) {
         outer.push(inner);
     }
     
+    let _ = fs::create_dir("test_maps_output");
     let filename = format!("test_maps_output/{}", name);
     let mut output = fs::File::create(filename).unwrap();
     

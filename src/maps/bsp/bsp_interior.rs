@@ -21,7 +21,6 @@ impl BspInteriorMap {
 
     fn add_subrects(&mut self, rect : Room, rng : &mut RandomNumberGenerator) {
         const MIN_ROOM_SIZE: i32 = 6;
-        const MAX_ROOM_SIZE: i32 = 10;
         
         // Remove the last rect from the list
         if !self.rects.is_empty() {

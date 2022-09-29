@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use bracket_pathfinding::prelude::*;
 
 use crate::maps::{utils::*, Architect};
@@ -14,7 +13,6 @@ pub struct VoronoiCellMap {
     pub map: Map,
     pub width: i32,
     pub height: i32,
-    noise_areas: HashMap<i32, Vec<usize>>,
     n_seeds: usize,
     distance_algorithm: DistanceAlgorithm
 }
@@ -25,7 +23,6 @@ impl VoronoiCellMap {
             map: Map::new(width, height),
             width,
             height,
-            noise_areas: HashMap::new(),
             n_seeds: 64,
             distance_algorithm: DistanceAlgorithm::Pythagoras
         }
@@ -36,7 +33,6 @@ impl VoronoiCellMap {
             map: Map::new(width, height),
             width,
             height,
-            noise_areas: HashMap::new(),
             n_seeds: 64,
             distance_algorithm: DistanceAlgorithm::Manhattan
         }

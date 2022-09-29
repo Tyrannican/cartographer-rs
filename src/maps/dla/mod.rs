@@ -162,7 +162,6 @@ impl Architect for DlaMap {
 
                     paint(&mut self.map, self.symmetry, self.brush_size, prev_x, prev_y);
                 }
-                _ => {}
             }
 
             floor_tile_count = self.map.count_tile_type(TileType::Floor);
