@@ -2,6 +2,8 @@ use rand::Rng;
 use std::fs;
 use std::io::prelude::*;
 
+use bracket_pathfinding::prelude::*;
+
 pub struct Position {
     pub x: i32,
     pub y: i32
@@ -45,10 +47,11 @@ impl Room {
 }
 
 pub struct Map {
-    tiles: Vec<TileType>,
+    pub tiles: Vec<TileType>,
     width: i32,
     height: i32,
-    pub start_position: Position
+    pub start_position: Position,
+    blocked: Vec<bool>
 }
 
 impl Map {
@@ -58,6 +61,7 @@ impl Map {
             width,
             height,
             start_position: Position::new(0, 0),
+            blocked: vec![false; (width * height) as usize] 
         }
     }
 
@@ -70,14 +74,22 @@ impl Map {
         self.tiles[idx]
     }
 
+    pub fn get_tile_at_idx(&self, idx: usize) -> TileType {
+        self.tiles[idx]
+    }
+
     pub fn set_tile(&mut self, x: i32, y: i32, tile: TileType) {
         let idx = self.xy_idx(x, y);
         self.tiles[idx] = tile;
     }
 
+    pub fn set_tile_at_idx(&mut self, idx: usize, tile: TileType) {
+        self.tiles[idx] = tile;
+    }
+
     pub fn output_map(&self, name: &str) {
         let mut map = Vec::new();
-
+        
         for x in 0..self.width {
             let mut inner = Vec::new();
             for y in 0..self.height {
@@ -91,7 +103,7 @@ impl Map {
             }
             map.push(inner);
         }
-
+        
         let mut output = fs::File::create(name).unwrap();
         for x in 0..self.width {
             for y in 0..self.height {
@@ -99,6 +111,45 @@ impl Map {
             }
             write!(output, "\n").unwrap();
         }
+    }
+
+    fn is_exit_valid(&self, x: i32, y: i32) -> bool {
+        if x < 1 || x > self.width-1 || y < 1 || y > self.height-1 { return false; }
+        self.get_tile(x, y) != TileType::Wall
+    }
+}
+
+impl Algorithm2D for Map {
+    fn dimensions(&self) -> Point {
+        Point::new(self.width, self.height)
+    }
+}
+
+impl BaseMap for Map {
+    fn is_opaque(&self, idx: usize) -> bool {
+        self.get_tile_at_idx(idx) == TileType::Wall
+    }
+
+    fn get_available_exits(&self, idx:usize) -> SmallVec<[(usize, f32); 10]> {
+        let mut exits = SmallVec::new();
+        let x = idx as i32 % self.width;
+        let y = idx as i32 / self.width;
+        let w = self.width as usize;
+    
+        // Cardinal directions
+        if self.is_exit_valid(x - 1, y) { exits.push((idx - 1, 1.0)) };
+        if self.is_exit_valid(x + 1, y) { exits.push((idx + 1, 1.0)) };
+        if self.is_exit_valid(x, y - 1) { exits.push((idx - w, 1.0)) };
+        if self.is_exit_valid(x, y + 1) { exits.push((idx + w, 1.0)) };
+    
+        exits
+    }
+
+    fn get_pathing_distance(&self, idx1: usize, idx2: usize) -> f32 {
+        let w = self.width as usize;
+        let p1 = Point::new(idx1 % w, idx1 / w);
+        let p2 = Point::new(idx2 % w, idx2 / w);
+        DistanceAlg::Pythagoras.distance2d(p1, p2)
     }
 }
 
