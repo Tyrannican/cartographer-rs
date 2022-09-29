@@ -90,36 +90,6 @@ impl Map {
         self.tiles.iter().filter(|a| **a == tile).count()
     }
 
-    pub fn output_map(&self, name: &str) {
-        let mut map = Vec::new();
-        
-        println!("Width: {} Height: {}", self.width, self.height);
-        for y in 0..self.height {
-            let mut inner = Vec::new();
-            for x in 0..self.width {
-                let tile = self.get_tile(x, y);
-                match tile {
-                    TileType::Floor => inner.push(' '),
-                    TileType::Wall => inner.push('#'),
-                    TileType::Exit => inner.push('E'),
-                    _ => {}
-                }
-            }
-
-            map.push(inner);
-        }
-        
-        let filename = format!("test_maps_output/{}", name);
-        let mut output = fs::File::create(filename).unwrap();
-        
-        for inner in map.iter() {
-            for c in inner.iter() {
-                write!(output, "{}", c).unwrap();
-            }
-            write!(output, "\n").unwrap();
-        }
-    }
-
     fn is_exit_valid(&self, x: i32, y: i32) -> bool {
         if x < 1 || x > self.width-1 || y < 1 || y > self.height-1 { return false; }
         self.get_tile(x, y) != TileType::Wall
@@ -162,6 +132,53 @@ impl BaseMap for Map {
     }
 }
 
+pub struct RandomNumberGenerator {
+    rng: rand::rngs::ThreadRng
+}
+
+impl RandomNumberGenerator {
+    pub fn new() -> Self {
+        Self { rng: rand::thread_rng() }
+    }
+    
+    pub fn range(&mut self, min: i32, max: i32) -> i32 {
+        self.rng.gen_range(min..max)
+    }
+    
+    pub fn roll_dice(&mut self, start: i32, end: i32) -> i32 {
+        self.rng.gen_range(start..end+1)
+    }
+}
+
+pub fn output_map(map: &Map, name: &str) {
+    let mut outer = Vec::new();
+    
+    for y in 0..map.height {
+        let mut inner = Vec::new();
+        for x in 0..map.width {
+            let tile = map.get_tile(x, y);
+            match tile {
+                TileType::Floor => inner.push(' '),
+                TileType::Wall => inner.push('#'),
+                TileType::Exit => inner.push('E'),
+                _ => {}
+            }
+        }
+
+        outer.push(inner);
+    }
+    
+    let filename = format!("test_maps_output/{}", name);
+    let mut output = fs::File::create(filename).unwrap();
+    
+    for inner in outer.iter() {
+        for c in inner.iter() {
+            write!(output, "{}", c).unwrap();
+        }
+        write!(output, "\n").unwrap();
+    }
+}
+
 /// Searches a map, removes unreachable areas and returns the most distant tile.
 pub fn remove_unreachable_areas_returning_most_distant(map : &mut Map, start_idx : usize) -> usize {
     let map_starts : Vec<usize> = vec![start_idx];
@@ -186,20 +203,61 @@ pub fn remove_unreachable_areas_returning_most_distant(map : &mut Map, start_idx
     exit_tile.0
 }
 
-pub struct RandomNumberGenerator {
-    rng: rand::rngs::ThreadRng
+#[derive(PartialEq, Copy, Clone)]
+pub enum Symmetry { None, Horizontal, Vertical, Both }
+
+pub fn paint(map: &mut Map, mode: Symmetry, brush_size: i32, x: i32, y:i32) {
+    match mode {
+        Symmetry::None => apply_paint(map, brush_size, x, y),
+        Symmetry::Horizontal => {
+            let center_x = map.width / 2;
+            if x == center_x {
+                apply_paint(map, brush_size, x, y);                    
+            } else {
+                let dist_x = i32::abs(center_x - x);
+                apply_paint(map, brush_size, center_x + dist_x, y);
+                apply_paint(map, brush_size, center_x - dist_x, y);
+            }
+        }
+        Symmetry::Vertical => {
+            let center_y = map.height / 2;
+            if y == center_y {
+                apply_paint(map, brush_size, x, y);
+            } else {
+                let dist_y = i32::abs(center_y - y);
+                apply_paint(map, brush_size, x, center_y + dist_y);
+                apply_paint(map, brush_size, x, center_y - dist_y);
+            }
+        }
+        Symmetry::Both => {
+            let center_x = map.width / 2;
+            let center_y = map.height / 2;
+            if x == center_x && y == center_y {
+                apply_paint(map, brush_size, x, y);
+            } else {
+                let dist_x = i32::abs(center_x - x);
+                apply_paint(map, brush_size, center_x + dist_x, y);
+                apply_paint(map, brush_size, center_x - dist_x, y);
+                let dist_y = i32::abs(center_y - y);
+                apply_paint(map, brush_size, x, center_y + dist_y);
+                apply_paint(map, brush_size, x, center_y - dist_y);
+            }
+        }
+    }
 }
 
-impl RandomNumberGenerator {
-    pub fn new() -> Self {
-        Self { rng: rand::thread_rng() }
-    }
-
-    pub fn range(&mut self, min: i32, max: i32) -> i32 {
-        self.rng.gen_range(min..max)
-    }
-
-    pub fn roll_dice(&mut self, start: i32, end: i32) -> i32 {
-        self.rng.gen_range(start..end+1)
+fn apply_paint(map: &mut Map, brush_size: i32, x: i32, y: i32) {
+    match brush_size {
+        1 => map.set_tile(x, y, TileType::Floor),
+        _ => {
+            let half_brush_size = brush_size / 2;
+            for brush_y in y - half_brush_size .. y + half_brush_size {
+                for brush_x in x-half_brush_size .. x+half_brush_size {
+                    if brush_x > 1 && brush_x < map.width-1 && brush_y > 1 && brush_y < map.height-1 {
+                        map.set_tile(brush_x, brush_y, TileType::Floor);
+                    }
+                }
+            }
+        }
     }
 }

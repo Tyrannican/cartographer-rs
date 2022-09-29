@@ -6,7 +6,9 @@ pub enum DrunkSpawnMode { StartingPoint, Random }
 pub struct DrunkardSettings {
     pub spawn_mode : DrunkSpawnMode,
     pub lifetime: i32,
-    pub floor_percent: f32
+    pub floor_percent: f32,
+    pub brush_size: i32,
+    pub symmetry: Symmetry
 }
 
 pub struct DrunkardWalkMap {
@@ -34,7 +36,9 @@ impl DrunkardWalkMap {
             settings: DrunkardSettings {
                 spawn_mode: DrunkSpawnMode::StartingPoint,
                 lifetime: 400,
-                floor_percent: 0.5
+                floor_percent: 0.5,
+                brush_size: 1,
+                symmetry: Symmetry::None
             }
         }
     }
@@ -47,7 +51,9 @@ impl DrunkardWalkMap {
             settings: DrunkardSettings {
                 spawn_mode: DrunkSpawnMode::Random,
                 lifetime: 400,
-                floor_percent: 0.5
+                floor_percent: 0.5,
+                brush_size: 1,
+                symmetry: Symmetry::None
             }
         }
     }
@@ -60,7 +66,39 @@ impl DrunkardWalkMap {
             settings: DrunkardSettings {
                 spawn_mode: DrunkSpawnMode::Random,
                 lifetime: 100,
-                floor_percent: 0.4
+                floor_percent: 0.4,
+                brush_size: 1,
+                symmetry: Symmetry::None
+            }
+        }
+    }
+
+    pub fn fat_passages(width: i32, height: i32) -> Self {
+        Self {
+            map: Map::new(width, height),
+            width,
+            height,
+            settings: DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::Random,
+                lifetime: 400,
+                floor_percent: 0.4,
+                brush_size: 2,
+                symmetry: Symmetry::None
+            }
+        }
+    }
+
+    pub fn fearful_symmetry(width: i32, height: i32) -> Self {
+        Self {
+            map: Map::new(width, height),
+            width,
+            height,
+            settings: DrunkardSettings {
+                spawn_mode: DrunkSpawnMode::Random,
+                lifetime: 400,
+                floor_percent: 0.4,
+                brush_size: 1,
+                symmetry: Symmetry::Both
             }
         }
     }
@@ -104,6 +142,7 @@ impl Architect for DrunkardWalkMap {
             let mut drunk_life = self.settings.lifetime;
 
             while drunk_life > 0 {
+                paint(&mut self.map, self.settings.symmetry, self.settings.brush_size, drunk_x, drunk_y);
                 self.map.set_tile(drunk_x, drunk_y, TileType::Exit);
 
                 let stagger_direction = rng.roll_dice(1, 4);
@@ -129,6 +168,9 @@ impl Architect for DrunkardWalkMap {
         // Set the exit
         let exit_idx = remove_unreachable_areas_returning_most_distant(&mut self.map, start_idx);
         self.map.set_tile_at_idx(exit_idx, TileType::Exit);
+    }
 
+    fn get_map(&self) -> &Map {
+        &self.map
     }
 }

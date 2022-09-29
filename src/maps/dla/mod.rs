@@ -10,20 +10,12 @@ pub enum DlaAlgorithm {
     CentralAttractor
 }
 
-#[derive(PartialEq, Copy, Clone)]
-pub enum DlaSymmetry {
-    None,
-    Horizontal,
-    Vertical,
-    Both
-}
-
 pub struct DlaMap {
     pub map: Map,
     pub width: i32,
     pub height: i32,
     algorithm: DlaAlgorithm,
-    symmetry: DlaSymmetry,
+    symmetry: Symmetry,
     brush_size: i32,
     floor_percent: f32
 }
@@ -36,7 +28,7 @@ impl DlaMap {
             height,
             algorithm: DlaAlgorithm::WalkInwards,
             brush_size: 1,
-            symmetry: DlaSymmetry::None,
+            symmetry: Symmetry::None,
             floor_percent: 0.45
         }
     }
@@ -48,7 +40,7 @@ impl DlaMap {
             height,
             algorithm: DlaAlgorithm::WalkInwards,
             brush_size: 1,
-            symmetry: DlaSymmetry::None,
+            symmetry: Symmetry::None,
             floor_percent: 0.45
         }
     }
@@ -60,7 +52,7 @@ impl DlaMap {
             height,
             algorithm: DlaAlgorithm::WalkOutwards,
             brush_size: 2,
-            symmetry: DlaSymmetry::None,
+            symmetry: Symmetry::None,
             floor_percent: 0.45
         }
     }
@@ -72,7 +64,7 @@ impl DlaMap {
             height,
             algorithm: DlaAlgorithm::CentralAttractor,
             brush_size: 2,
-            symmetry: DlaSymmetry::None,
+            symmetry: Symmetry::None,
             floor_percent: 0.45
         }
     }
@@ -84,64 +76,8 @@ impl DlaMap {
             height,
             algorithm: DlaAlgorithm::CentralAttractor,
             brush_size: 2,
-            symmetry: DlaSymmetry::Horizontal,
+            symmetry: Symmetry::Horizontal,
             floor_percent: 0.25
-        }
-    }
-
-    fn paint(&mut self, x: i32, y: i32) {
-        match self.symmetry {
-            DlaSymmetry::None => self.apply_paint(x, y),
-            DlaSymmetry::Horizontal => {
-                let center_x = self.map.width / 2;
-                if x == center_x {
-                    self.apply_paint(x, y);                    
-                } else {
-                    let dist_x = i32::abs(center_x - x);
-                    self.apply_paint(center_x + dist_x, y);
-                    self.apply_paint(center_x - dist_x, y);
-                }
-            }
-            DlaSymmetry::Vertical => {
-                let center_y = self.map.height / 2;
-                if y == center_y {
-                    self.apply_paint(x, y);
-                } else {
-                    let dist_y = i32::abs(center_y - y);
-                    self.apply_paint(x, center_y + dist_y);
-                    self.apply_paint(x, center_y - dist_y);
-                }
-            }
-            DlaSymmetry::Both => {
-                let center_x = self.map.width / 2;
-                let center_y = self.map.height / 2;
-                if x == center_x && y == center_y {
-                    self.apply_paint(x, y);
-                } else {
-                    let dist_x = i32::abs(center_x - x);
-                    self.apply_paint(center_x + dist_x, y);
-                    self.apply_paint(center_x - dist_x, y);
-                    let dist_y = i32::abs(center_y - y);
-                    self.apply_paint(x, center_y + dist_y);
-                    self.apply_paint(x, center_y - dist_y);
-                }
-            }
-        }
-    }
-
-    fn apply_paint(&mut self, x: i32, y: i32) {
-        match self.brush_size {
-            1 => self.map.set_tile(x, y, TileType::Floor),
-            _ => {
-                let half_brush_size = self.brush_size / 2;
-                for brush_y in y - half_brush_size..y + half_brush_size {
-                    for brush_x in x - half_brush_size..x + half_brush_size {
-                        if brush_x > 1 && brush_x < self.width-1 && brush_y > 1 && brush_y < self.height-1 {
-                            self.map.set_tile(brush_x, brush_y, TileType::Floor);
-                        }
-                    }
-                }
-            }
         }
     }
 }
@@ -187,7 +123,7 @@ impl Architect for DlaMap {
                         }
                     }
 
-                    self.paint(prev_x, prev_y);
+                    paint(&mut self.map, self.symmetry, self.brush_size, prev_x, prev_y);
                 },
                 DlaAlgorithm::WalkOutwards => {
                     let mut digger_x = start_position.x;
@@ -202,7 +138,7 @@ impl Architect for DlaMap {
                             _ => { if digger_y < self.map.height - 2 { digger_y += 1; } }
                         }
                     }
-                    self.paint(digger_x, digger_y);
+                    paint(&mut self.map, self.symmetry, self.brush_size, digger_x, digger_y);
                 },
                 DlaAlgorithm::CentralAttractor => {
                     let mut digger_x = rng.roll_dice(1, self.map.width - 3) + 1;
@@ -223,7 +159,8 @@ impl Architect for DlaMap {
                         digger_y = path[0].y;
                         path.remove(0);
                     }
-                    self.paint(prev_x, prev_y);
+
+                    paint(&mut self.map, self.symmetry, self.brush_size, prev_x, prev_y);
                 }
                 _ => {}
             }
@@ -236,5 +173,9 @@ impl Architect for DlaMap {
 
         // Place the stairs
         self.map.set_tile_at_idx(exit_tile, TileType::Exit);
+    }
+
+    fn get_map(&self) -> &Map {
+        &self.map
     }
 }

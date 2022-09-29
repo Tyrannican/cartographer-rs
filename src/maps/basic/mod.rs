@@ -102,4 +102,8 @@ impl Architect for BasicMap {
 
         self.fill_edges();
     }
+
+    fn get_map(&self) -> &Map {
+        &self.map
+    }
 }

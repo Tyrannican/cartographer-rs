@@ -116,4 +116,8 @@ impl Architect for BspInteriorMap {
         let (exit_x, exit_y) = self.rooms[self.rooms.len() - 1].center();
         self.map.set_tile(exit_x, exit_y, TileType::Exit);
     }
+
+    fn get_map(&self) -> &Map {
+        &self.map
+    }
 }

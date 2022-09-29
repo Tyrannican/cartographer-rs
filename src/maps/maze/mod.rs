@@ -199,4 +199,8 @@ impl Architect for MazeMap {
         // Place the stairs
         self.map.set_tile_at_idx(exit_tile, TileType::Exit);
     }
+
+    fn get_map(&self) -> &Map {
+        &self.map
+    }
 }

@@ -72,4 +72,8 @@ impl Architect for CellularAutomataMap {
         let exit_idx = remove_unreachable_areas_returning_most_distant(&mut self.map, start_idx);
         self.map.set_tile_at_idx(exit_idx, TileType::Exit);
     }
+
+    fn get_map(&self) -> &Map {
+        &self.map
+    }
 }
