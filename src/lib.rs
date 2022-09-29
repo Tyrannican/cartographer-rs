@@ -59,4 +59,32 @@ mod tests {
         m.build();
         m.map.output_map("maze_map.txt");
     }
+
+    #[test]
+    fn build_dla_map_walk_inwards() {
+        let mut m = MapSelector::dla_map_walk_inwards(100, 100);
+        m.build();
+        m.map.output_map("dla_map_walk_inwards.txt")
+    }
+
+    #[test]
+    fn build_dla_map_walk_outwards() {
+        let mut m = MapSelector::dla_map_walk_outwards(100, 100);
+        m.build();
+        m.map.output_map("dla_map_walk_outwards.txt")
+    }
+
+    #[test]
+    fn build_dla_map_central_attractor() {
+        let mut m = MapSelector::dla_map_central_attractor(100, 100);
+        m.build();
+        m.map.output_map("dla_map_central_attractor.txt")
+    }
+
+    #[test]
+    fn build_dla_map_insectoid() {
+        let mut m = MapSelector::dla_map_insectoid(100, 100);
+        m.build();
+        m.map.output_map("dla_map_insectoid.txt")
+    }
 }

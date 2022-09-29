@@ -5,6 +5,7 @@ pub mod bsp;
 pub mod cellular_automata;
 pub mod drunkard_walk;
 pub mod maze;
+pub mod dla;
 
 use basic::BasicMap;
 use bsp::bsp::BspMap;
@@ -12,6 +13,7 @@ use bsp::bsp_interior::BspInteriorMap;
 use cellular_automata::CellularAutomataMap;
 use drunkard_walk::DrunkardWalkMap;
 use maze::MazeMap;
+use dla::DlaMap;
 
 pub trait Architect {
     fn build(&mut self);
@@ -50,5 +52,21 @@ impl MapSelector {
 
     pub fn maze_map(width: i32, height: i32) -> MazeMap {
         MazeMap::new(width, height)
+    }
+
+    pub fn dla_map_walk_inwards(width: i32, height: i32) -> DlaMap {
+        DlaMap::walk_inwards(width, height)
+    }
+
+    pub fn dla_map_walk_outwards(width: i32, height: i32) -> DlaMap {
+        DlaMap::walk_outwards(width, height)
+    }
+
+    pub fn dla_map_central_attractor(width: i32, height: i32) -> DlaMap {
+        DlaMap::central_attractor(width, height)
+    }
+
+    pub fn dla_map_insectoid(width: i32, height: i32) -> DlaMap {
+        DlaMap::insectoid(width, height)
     }
 }

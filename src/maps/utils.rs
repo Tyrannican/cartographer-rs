@@ -86,6 +86,10 @@ impl Map {
         self.tiles[idx] = tile;
     }
 
+    pub fn count_tile_type(&self, tile: TileType) -> usize {
+        self.tiles.iter().filter(|a| **a == tile).count()
+    }
+
     pub fn output_map(&self, name: &str) {
         let mut map = Vec::new();
         

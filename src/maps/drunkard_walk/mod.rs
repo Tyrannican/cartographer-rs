@@ -78,7 +78,7 @@ impl Architect for DrunkardWalkMap {
 
         let total_tiles = self.width * self.height;
         let desired_floor_tiles = (self.settings.floor_percent * total_tiles as f32) as usize;
-        let mut floor_tile_count = self.map.tiles.iter().filter(|a| **a == TileType::Floor).count();
+        let mut floor_tile_count = self.map.count_tile_type(TileType::Floor);
         
         let mut digger_count = 0;
         while floor_tile_count < desired_floor_tiles {
@@ -123,7 +123,7 @@ impl Architect for DrunkardWalkMap {
                     *t = TileType::Floor;
                 }
             }
-            floor_tile_count = self.map.tiles.iter().filter(|a| **a == TileType::Floor).count();
+            floor_tile_count = self.map.count_tile_type(TileType::Floor);
         }
 
         // Set the exit
