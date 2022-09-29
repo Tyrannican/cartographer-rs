@@ -4,13 +4,13 @@ use super::utils::*;
 
 use super::Architect;
 
-pub struct TestingMap {
+pub struct BasicMap {
     pub map: Map,
     pub width: i32,
     pub height: i32
 }
 
-impl TestingMap {
+impl BasicMap {
     pub fn new(width: i32, height: i32) -> Self {
         Self {
             map: Map::new(width, height),
@@ -46,7 +46,7 @@ impl TestingMap {
     }
 }
 
-impl Architect for TestingMap {
+impl Architect for BasicMap {
     fn build(&mut self) {
         let mut rooms : Vec<Room> = Vec::new();
         let max_rooms : i32 = 30;

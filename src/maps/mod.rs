@@ -1,11 +1,11 @@
 pub mod utils;
 
-pub mod testing;
+pub mod basic;
 pub mod bsp;
 pub mod cellular_automata;
 pub mod drunkard_walk;
 
-use testing::TestingMap;
+use basic::BasicMap;
 use bsp::bsp::BspMap;
 use bsp::bsp_interior::BspInteriorMap;
 use cellular_automata::CellularAutomataMap;
@@ -18,8 +18,8 @@ pub trait Architect {
 pub struct MapSelector;
 
 impl MapSelector {
-    pub fn testing_map(width: i32, height: i32) -> TestingMap {
-        TestingMap::new(width, height)
+    pub fn basic_map(width: i32, height: i32) -> BasicMap {
+        BasicMap::new(width, height)
     }
 
     pub fn bsp_map(width: i32, height: i32) -> BspMap {

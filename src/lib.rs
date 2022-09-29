@@ -6,7 +6,7 @@ mod tests {
 
     #[test]
     fn build_test_map() {
-        let mut m = MapSelector::testing_map(300, 300);
+        let mut m = MapSelector::basic_map(300, 300);
         m.build();
         m.map.output_map("test_map.txt");
     }
