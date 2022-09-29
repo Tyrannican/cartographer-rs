@@ -4,12 +4,14 @@ pub mod basic;
 pub mod bsp;
 pub mod cellular_automata;
 pub mod drunkard_walk;
+pub mod maze;
 
 use basic::BasicMap;
 use bsp::bsp::BspMap;
 use bsp::bsp_interior::BspInteriorMap;
 use cellular_automata::CellularAutomataMap;
 use drunkard_walk::DrunkardWalkMap;
+use maze::MazeMap;
 
 pub trait Architect {
     fn build(&mut self);
@@ -44,5 +46,9 @@ impl MapSelector {
 
     pub fn drunkard_walk_map_winding_passages(width: i32, height: i32) -> DrunkardWalkMap {
         DrunkardWalkMap::winding_passages(width, height)
+    }
+
+    pub fn maze_map(width: i32, height: i32) -> MazeMap {
+        MazeMap::new(width, height)
     }
 }

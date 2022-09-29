@@ -71,7 +71,7 @@ impl Architect for DrunkardWalkMap {
         let mut rng = RandomNumberGenerator::new();
 
         // Set a central starting point
-        let start_position = Position{ x: self.width / 2, y: self.height / 2 };
+        let start_position = Position::new(self.width / 2, self.height / 2);
         let start_idx = self.map.xy_idx(start_position.x, start_position.y);
         self.map.start_position = start_position.clone();
         self.map.set_tile_at_idx(start_idx, TileType::Floor);

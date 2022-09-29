@@ -52,4 +52,11 @@ mod tests {
         m.build();
         m.map.output_map("drunkard_walk_map_winding_passages.txt");
     }
+
+    #[test]
+    fn build_maze_map() {
+        let mut m = MapSelector::maze_map(80, 40);
+        m.build();
+        m.map.output_map("maze_map.txt");
+    }
 }

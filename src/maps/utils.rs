@@ -49,8 +49,8 @@ impl Room {
 
 pub struct Map {
     pub tiles: Vec<TileType>,
-    width: i32,
-    height: i32,
+    pub width: i32,
+    pub height: i32,
     pub start_position: Position,
 }
 
