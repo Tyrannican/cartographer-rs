@@ -59,37 +59,17 @@ impl Architect for CellularAutomataMap {
             self.map.tiles = newtiles.clone();
         }
 
-        // Find a starting point; start at the middle and walk left until we find an open tile
+        // Find a starting point
         let mut start = Position::new(self.width / 2, self.height / 2);
         while self.map.get_tile(start.x, start.y) != TileType::Floor {
             start.x -= 1;
         }
 
         let (start_x, start_y) = (start.x, start.y);
+        let start_idx = self.map.xy_idx(start_x, start_y);
         self.map.start_position = start;
 
-        // Find all tiles we can reach from the starting point
-        let start_idx = self.map.xy_idx(start_x, start_y);
-        let map_starts : Vec<usize> = vec![start_idx];
-        let dijkstra_map = DijkstraMap::new(self.width, self.height, &map_starts , &self.map, 200.0);
-        let mut exit_tile = (0, 0.0f32);
-        for (i, tile) in self.map.tiles.iter_mut().enumerate() {
-            if *tile == TileType::Floor {
-                let distance_to_start = dijkstra_map.map[i];
-                println!("{:?}", distance_to_start);
-                // We can't get to this tile - so we'll make it a wall
-                if distance_to_start == std::f32::MAX {
-                    *tile = TileType::Wall;
-                } else {
-                    // If it is further away than our current exit candidate, move the exit
-                    if distance_to_start > exit_tile.1 {
-                        exit_tile.0 = i;
-                        exit_tile.1 = distance_to_start;
-                    }
-                }
-            }
-        }
-
-        self.map.tiles[exit_tile.0] = TileType::Exit;
+        let exit_idx = remove_unreachable_areas_returning_most_distant(&mut self.map, start_idx);
+        self.map.set_tile_at_idx(exit_idx, TileType::Exit);
     }
 }

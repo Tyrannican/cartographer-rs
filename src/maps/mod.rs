@@ -1,14 +1,15 @@
+pub mod utils;
 
 pub mod testing;
 pub mod bsp;
 pub mod cellular_automata;
-pub mod utils;
+pub mod drunkard_walk;
 
 use testing::TestingMap;
 use bsp::bsp::BspMap;
 use bsp::bsp_interior::BspInteriorMap;
-
-use self::cellular_automata::CellularAutomataMap;
+use cellular_automata::CellularAutomataMap;
+use drunkard_walk::DrunkardWalkMap;
 
 pub trait Architect {
     fn build(&mut self);
@@ -31,5 +32,17 @@ impl MapSelector {
 
     pub fn cellular_automata_map(width: i32, height: i32) -> CellularAutomataMap {
         CellularAutomataMap::new(width, height)
+    }
+
+    pub fn drunkard_walk_map_open_area(width: i32, height: i32) -> DrunkardWalkMap {
+        DrunkardWalkMap::open_area(width, height)
+    }
+
+    pub fn drunkard_walk_map_open_halls(width: i32, height: i32) -> DrunkardWalkMap {
+        DrunkardWalkMap::open_halls(width, height)
+    }
+
+    pub fn drunkard_walk_map_winding_passages(width: i32, height: i32) -> DrunkardWalkMap {
+        DrunkardWalkMap::winding_passages(width, height)
     }
 }

@@ -4,6 +4,7 @@ use std::io::prelude::*;
 
 use bracket_pathfinding::prelude::*;
 
+#[derive(Copy, Clone)]
 pub struct Position {
     pub x: i32,
     pub y: i32
@@ -51,7 +52,6 @@ pub struct Map {
     width: i32,
     height: i32,
     pub start_position: Position,
-    blocked: Vec<bool>
 }
 
 impl Map {
@@ -60,8 +60,7 @@ impl Map {
             tiles: vec![TileType::Wall; (width * height) as usize],
             width,
             height,
-            start_position: Position::new(0, 0),
-            blocked: vec![false; (width * height) as usize] 
+            start_position: Position::new(0, 0)
         }
     }
 
@@ -104,7 +103,8 @@ impl Map {
             map.push(inner);
         }
         
-        let mut output = fs::File::create(name).unwrap();
+        let filename = format!("test_maps_output/{}", name);
+        let mut output = fs::File::create(filename).unwrap();
         for x in 0..self.width {
             for y in 0..self.height {
                 write!(output, "{}", map[x as usize][y as usize]).unwrap()
@@ -151,6 +151,30 @@ impl BaseMap for Map {
         let p2 = Point::new(idx2 % w, idx2 / w);
         DistanceAlg::Pythagoras.distance2d(p1, p2)
     }
+}
+
+/// Searches a map, removes unreachable areas and returns the most distant tile.
+pub fn remove_unreachable_areas_returning_most_distant(map : &mut Map, start_idx : usize) -> usize {
+    let map_starts : Vec<usize> = vec![start_idx];
+    let dijkstra_map = DijkstraMap::new(map.width as usize, map.height as usize, &map_starts , map, 200.0);
+    let mut exit_tile = (0, 0.0f32);
+    for (i, tile) in map.tiles.iter_mut().enumerate() {
+        if *tile == TileType::Floor {
+            let distance_to_start = dijkstra_map.map[i];
+            // We can't get to this tile - so we'll make it a wall
+            if distance_to_start == std::f32::MAX {
+                *tile = TileType::Wall;
+            } else {
+                // If it is further away than our current exit candidate, move the exit
+                if distance_to_start > exit_tile.1 {
+                    exit_tile.0 = i;
+                    exit_tile.1 = distance_to_start;
+                }
+            }
+        }
+    }
+
+    exit_tile.0
 }
 
 pub struct RandomNumberGenerator {
