@@ -4,8 +4,8 @@ pub struct BspMap {
     pub map: Map,
     pub width: i32,
     pub height: i32,
-    pub rooms: Vec<Room>,
-    pub rects: Vec<Room>,
+    pub(crate) rooms: Vec<Room>,
+    pub(crate) rects: Vec<Room>,
 }
 
 impl BspMap {

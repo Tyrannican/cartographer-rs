@@ -29,7 +29,7 @@ pub enum TileType {
 }
 
 #[derive(Copy, Clone)]
-pub struct Room {
+pub(crate) struct Room {
     pub x1 : i32,
     pub x2 : i32,
     pub y1 : i32,
@@ -186,7 +186,7 @@ pub fn output_map(map: &Map, name: &str) {
 }
 
 /// Searches a map, removes unreachable areas and returns the most distant tile.
-pub fn remove_unreachable_areas_returning_most_distant(map : &mut Map, start_idx : usize) -> usize {
+pub(crate) fn remove_unreachable_areas_returning_most_distant(map : &mut Map, start_idx : usize) -> usize {
     let map_starts : Vec<usize> = vec![start_idx];
     let dijkstra_map = DijkstraMap::new(map.width as usize, map.height as usize, &map_starts , map, 200.0);
     let mut exit_tile = (0, 0.0f32);
@@ -209,10 +209,11 @@ pub fn remove_unreachable_areas_returning_most_distant(map : &mut Map, start_idx
     exit_tile.0
 }
 
+#[allow(dead_code)]
 #[derive(PartialEq, Copy, Clone)]
-pub enum Symmetry { None, Horizontal, Vertical, Both }
+pub(crate) enum Symmetry { None, Horizontal, Vertical, Both }
 
-pub fn paint(map: &mut Map, mode: Symmetry, brush_size: i32, x: i32, y:i32) {
+pub(crate) fn paint(map: &mut Map, mode: Symmetry, brush_size: i32, x: i32, y:i32) {
     match mode {
         Symmetry::None => apply_paint(map, brush_size, x, y),
         Symmetry::Horizontal => {

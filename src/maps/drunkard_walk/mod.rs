@@ -3,12 +3,12 @@ use crate::maps::{utils::*, Architect};
 #[derive(PartialEq, Copy, Clone)]
 pub enum DrunkSpawnMode { StartingPoint, Random }
 
-pub struct DrunkardSettings {
-    pub spawn_mode : DrunkSpawnMode,
-    pub lifetime: i32,
-    pub floor_percent: f32,
-    pub brush_size: i32,
-    pub symmetry: Symmetry
+pub(crate) struct DrunkardSettings {
+    pub(crate) spawn_mode : DrunkSpawnMode,
+    pub(crate) lifetime: i32,
+    pub(crate) floor_percent: f32,
+    pub(crate) brush_size: i32,
+    pub(crate) symmetry: Symmetry
 }
 
 pub struct DrunkardWalkMap {
@@ -19,15 +19,6 @@ pub struct DrunkardWalkMap {
 }
 
 impl DrunkardWalkMap {
-    pub fn new(width: i32, height: i32, settings: DrunkardSettings) -> Self {
-        Self {
-            map: Map::new(width, height),
-            width,
-            height,
-            settings
-        }
-    }
-
     pub fn open_area(width: i32, height: i32) -> Self {
         Self {
             map: Map::new(width, height),
