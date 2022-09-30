@@ -4,7 +4,7 @@ pub struct BspMap {
     pub map: Map,
     pub width: i32,
     pub height: i32,
-    pub(crate) rooms: Vec<Room>,
+    pub rooms: Vec<Room>,
     pub(crate) rects: Vec<Room>,
 }
 
@@ -33,7 +33,7 @@ impl BspMap {
 
     fn get_random_rect(&mut self, rng : &mut RandomNumberGenerator) -> Room {
         if self.rects.len() == 1 { return self.rects[0]; }
-        let idx = (rng.roll_dice(1, self.rects.len() as i32)-1) as usize;
+        let idx = (rng.roll_dice(1, self.rects.len() as i32) - 1) as usize;
         self.rects[idx]
     }
 
@@ -42,8 +42,8 @@ impl BspMap {
         let rect_width = i32::abs((rect.x1 - rect.x2) as i32);
         let rect_height = i32::abs((rect.y1 - rect.y2) as i32);
     
-        let w = i32::max(3, rng.roll_dice(1, i32::min(rect_width, 10))-1) + 1;
-        let h = i32::max(3, rng.roll_dice(1, i32::min(rect_height, 10))-1) + 1;
+        let w = i32::max(3, rng.roll_dice(1, i32::min(rect_width, 10)) - 1) + 1;
+        let h = i32::max(3, rng.roll_dice(1, i32::min(rect_height, 10)) - 1) + 1;
     
         result.x1 += rng.roll_dice(1, 6)-1;
         result.y1 += rng.roll_dice(1, 6)-1;
@@ -135,11 +135,11 @@ impl Architect for BspMap {
         // Now we want corridors
         for i in 0..self.rooms.len()-1 {
             let room = self.rooms[i];
-            let next_room = self.rooms[i+1];
-            let start_x = room.x1 + (rng.roll_dice(1, i32::abs(room.x1 - room.x2))-1);
-            let start_y = room.y1 + (rng.roll_dice(1, i32::abs(room.y1 - room.y2))-1);
-            let end_x = next_room.x1 + (rng.roll_dice(1, i32::abs(next_room.x1 - next_room.x2))-1);
-            let end_y = next_room.y1 + (rng.roll_dice(1, i32::abs(next_room.y1 - next_room.y2))-1);
+            let next_room = self.rooms[i + 1];
+            let start_x = room.x1 + (rng.roll_dice(1, i32::abs(room.x1 - room.x2)) - 1);
+            let start_y = room.y1 + (rng.roll_dice(1, i32::abs(room.y1 - room.y2)) - 1);
+            let end_x = next_room.x1 + (rng.roll_dice(1, i32::abs(next_room.x1 - next_room.x2)) - 1);
+            let end_y = next_room.y1 + (rng.roll_dice(1, i32::abs(next_room.y1 - next_room.y2)) - 1);
             self.draw_corridor(start_x, start_y, end_x, end_y);
         }
 

@@ -29,7 +29,7 @@ pub enum TileType {
 }
 
 #[derive(Copy, Clone)]
-pub(crate) struct Room {
+pub struct Room {
     pub x1 : i32,
     pub x2 : i32,
     pub y1 : i32,
@@ -37,8 +37,8 @@ pub(crate) struct Room {
 }
 
 impl Room {
-    pub fn new(x:i32, y: i32, w:i32, h:i32) -> Self {
-        Room{x1:x, y1:y, x2:x+w, y2:y+h}
+    pub fn new(x: i32, y: i32, w: i32, h: i32) -> Self {
+        Room{x1: x, y1: y, x2: x + w, y2: y + h}
     }
 
     // Returns true if this overlaps with other
@@ -47,7 +47,7 @@ impl Room {
     }
 
     pub fn center(&self) -> (i32, i32) {
-        ((self.x1 + self.x2)/2, (self.y1 + self.y2)/2)
+        ((self.x1 + self.x2) / 2, (self.y1 + self.y2) / 2)
     }
 }
 
@@ -113,7 +113,7 @@ impl BaseMap for Map {
         self.get_tile_at_idx(idx) == TileType::Wall
     }
 
-    fn get_available_exits(&self, idx:usize) -> SmallVec<[(usize, f32); 10]> {
+    fn get_available_exits(&self, idx: usize) -> SmallVec<[(usize, f32); 10]> {
         let mut exits = SmallVec::new();
         let x = idx as i32 % self.width;
         let y = idx as i32 / self.width;
@@ -189,7 +189,7 @@ pub fn output_map(map: &Map, name: &str) {
 pub(crate) fn remove_unreachable_areas_returning_most_distant(map : &mut Map, start_idx : usize) -> usize {
     let map_starts : Vec<usize> = vec![start_idx];
     let dijkstra_map = DijkstraMap::new(map.width as usize, map.height as usize, &map_starts , map, 200.0);
-    let mut exit_tile = (0, 0.0f32);
+    let mut exit_tile = (0, 0.0_f32);
     for (i, tile) in map.tiles.iter_mut().enumerate() {
         if *tile == TileType::Floor {
             let distance_to_start = dijkstra_map.map[i];
@@ -259,8 +259,8 @@ fn apply_paint(map: &mut Map, brush_size: i32, x: i32, y: i32) {
         _ => {
             let half_brush_size = brush_size / 2;
             for brush_y in y - half_brush_size .. y + half_brush_size {
-                for brush_x in x-half_brush_size .. x+half_brush_size {
-                    if brush_x > 1 && brush_x < map.width-1 && brush_y > 1 && brush_y < map.height-1 {
+                for brush_x in x - half_brush_size .. x + half_brush_size {
+                    if brush_x > 1 && brush_x < map.width - 1 && brush_y > 1 && brush_y < map.height - 1 {
                         map.set_tile(brush_x, brush_y, TileType::Floor);
                     }
                 }

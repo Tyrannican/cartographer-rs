@@ -4,7 +4,7 @@ use super::{utils::*, Architect};
 use bracket_pathfinding::prelude::*;
 
 #[derive(PartialEq, Copy, Clone)]
-pub enum DlaAlgorithm {
+pub(crate) enum DlaAlgorithm {
     WalkInwards,
     WalkOutwards,
     CentralAttractor
@@ -21,18 +21,6 @@ pub struct DlaMap {
 }
 
 impl DlaMap {
-    pub fn new(width: i32, height: i32) -> Self {
-        Self {
-            map: Map::new(width, height),
-            width,
-            height,
-            algorithm: DlaAlgorithm::WalkInwards,
-            brush_size: 1,
-            symmetry: Symmetry::None,
-            floor_percent: 0.45
-        }
-    }
-
     pub fn walk_inwards(width: i32, height: i32) -> Self {
         Self {
             map: Map::new(width, height),
@@ -133,16 +121,16 @@ impl Architect for DlaMap {
                         let stagger_direction = rng.roll_dice(1, 4);
                         match stagger_direction {
                             1 => { if digger_x > 2 { digger_x -= 1; } }
-                            2 => { if digger_x < self.map.width - 2 { digger_x += 1; } }
+                            2 => { if digger_x < self.width - 2 { digger_x += 1; } }
                             3 => { if digger_y > 2 { digger_y -= 1; } }
-                            _ => { if digger_y < self.map.height - 2 { digger_y += 1; } }
+                            _ => { if digger_y < self.height - 2 { digger_y += 1; } }
                         }
                     }
                     paint(&mut self.map, self.symmetry, self.brush_size, digger_x, digger_y);
                 },
                 DlaAlgorithm::CentralAttractor => {
-                    let mut digger_x = rng.roll_dice(1, self.map.width - 3) + 1;
-                    let mut digger_y = rng.roll_dice(1, self.map.height - 3) + 1;
+                    let mut digger_x = rng.roll_dice(1, self.width - 3) + 1;
+                    let mut digger_y = rng.roll_dice(1, self.height - 3) + 1;
                     let mut prev_x = digger_x;
                     let mut prev_y = digger_y;
                 

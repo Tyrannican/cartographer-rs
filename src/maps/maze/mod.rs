@@ -76,7 +76,7 @@ impl<'a> Grid<'a> {
     }
 
     fn calculate_index(&self, row: i32, column: i32) -> i32 {
-        if row < 0 || column < 0 || column > self.width-1 || row > self.height-1 {
+        if row < 0 || column < 0 || column > self.width - 1 || row > self.height - 1 {
             -1
         } else {
             column + (row * self.width)

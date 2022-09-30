@@ -47,8 +47,8 @@ impl Architect for VoronoiCellMap {
         let mut voronoi_seeds : Vec<(usize, Point)> = Vec::new();
 
         while voronoi_seeds.len() < self.n_seeds {
-            let vx = rng.roll_dice(1, self.map.width-1);
-            let vy = rng.roll_dice(1, self.map.height-1);
+            let vx = rng.roll_dice(1, self.width-1);
+            let vy = rng.roll_dice(1, self.height-1);
             let vidx = self.map.xy_idx(vx, vy);
             let candidate = (vidx, Point::new(vx, vy));
             if !voronoi_seeds.contains(&candidate) {
@@ -57,10 +57,10 @@ impl Architect for VoronoiCellMap {
         }
 
         let mut voronoi_distance = vec![(0, 0.0f32) ; self.n_seeds];
-        let mut voronoi_membership : Vec<i32> = vec![0 ; self.map.width as usize * self.map.height as usize];
+        let mut voronoi_membership : Vec<i32> = vec![0 ; self.width as usize * self.height as usize];
         for (i, vid) in voronoi_membership.iter_mut().enumerate() {
-            let x = i as i32 % self.map.width;
-            let y = i as i32 / self.map.width;
+            let x = i as i32 % self.width;
+            let y = i as i32 / self.width;
 
             for (seed, pos) in voronoi_seeds.iter().enumerate() {
                 let distance;
