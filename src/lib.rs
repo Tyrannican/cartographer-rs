@@ -18,7 +18,7 @@ mod tests {
 
     #[test]
     fn build_bsp_map() {
-        let mut m = MapSelector::bsp_map(300, 300);
+        let mut m = MapSelector::bsp_map(100, 100);
         m.build();
 
         #[cfg(feature = "debug")]
@@ -27,7 +27,7 @@ mod tests {
 
     #[test]
     fn build_bsp_interior_map() {
-        let mut m = MapSelector::bsp_interior_map(300, 300);
+        let mut m = MapSelector::bsp_interior_map(100, 100);
         m.build();
 
         #[cfg(feature = "debug")]
@@ -36,7 +36,7 @@ mod tests {
 
     #[test]
     fn build_cellular_automata_map() {
-        let mut m = MapSelector::cellular_automata_map(300, 300);
+        let mut m = MapSelector::cellular_automata_map(100, 100);
         m.build();
 
         #[cfg(feature = "debug")]
