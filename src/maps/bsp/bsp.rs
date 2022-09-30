@@ -153,4 +153,8 @@ impl Architect for BspMap {
     fn get_map(&self) -> &Map {
         &self.map
     }
+
+    fn start_position(&self) -> (i32, i32) {
+        (self.map.start_position.x, self.map.start_position.y)
+    }
 }

@@ -22,6 +22,7 @@ use utils::{RandomNumberGenerator, Map};
 pub trait Architect {
     fn build(&mut self);
     fn get_map(&self) -> &Map;
+    fn start_position(&self) -> (i32, i32);
 }
 
 pub struct MapSelector;
